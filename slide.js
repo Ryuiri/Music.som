@@ -1,0 +1,182 @@
+import debounce from "./debounce.js";
+export class Slide {
+  constructor(slide, wrapper) {
+    this.slide = document.querySelector(slide);
+    this.wrapper = document.querySelector(wrapper);
+    this.dist = { finalPosition: 0, startX: 0, movement: 0 };
+    this.active1Class = "active1";
+    this.changeEvent = new Event('changeEvent');
+  }
+  transition(active1) {
+    this.slide.style.transition = active1 ? "transform .3s" : "";
+  }
+  moveSlide(distX) {
+    this.dist.movePosition = distX;
+    this.slide.style.transform = `translate3d(${distX}px, 0, 0)`;
+  }
+
+  updatePosition(clientX) {
+    this.dist.movement = (this.dist.startX - clientX) * 1.6;
+    return this.dist.finalPosition - this.dist.movement;
+  }
+
+  onStart(event) {
+    let movetype;
+    if (event.type === "mousedown") {
+      event.preventDefault();
+      this.dist.startX = event.clientX;
+      movetype = "mousemove";
+    } else {
+      this.dist.startX = event.changedTouches[0].clientX;
+      movetype = "touchmove";
+    }
+    this.wrapper.addEventListener(movetype, this.onMove);
+    this.transition(false);
+  }
+
+  onMove(event) {
+    const poiterPosition =
+      event.type === "mousemove"
+        ? event.clientX
+        : event.changedTouches[0].clientX;
+    const finalPosition = this.updatePosition(poiterPosition);
+    this.moveSlide(finalPosition);
+  }
+
+  onEnd(event) {
+    const movetype = event.type === "mouseup" ? "mousemove" : "touchmove";
+    this.wrapper.removeEventListener(movetype, this.onMove);
+    this.dist.finalPosition = this.dist.movePosition;
+    this.transition(true);
+    this.changeSlideOnEnd();
+  }
+  changeSlideOnEnd() {
+    if (this.dist.movement > 120 && this.index.next !== undefined) {
+      this.active1NextSlide();
+    } else if (this.dist.movement < -120 && this.index.prev !== undefined) {
+      this.active1PrevSlide();
+    } else {
+      this.changeSlide(this.index.active1);
+    }
+  }
+
+  addSlideEvents() {
+    this.wrapper.addEventListener("mousedown", this.onStart);
+    this.wrapper.addEventListener("touchstart", this.onStart);
+    this.wrapper.addEventListener("mouseup", this.onEnd);
+    this.wrapper.addEventListener("touchend", this.onEnd);
+  }
+
+  bindEvents() {
+    this.onStart = this.onStart.bind(this);
+    this.onMove = this.onMove.bind(this);
+    this.onEnd = this.onEnd.bind(this);
+    this.onResize = debounce(this.onResize.bind(this), 200);
+    this.active1PrevSlide = this.active1PrevSlide.bind(this);
+    this.active1NextSlide = this.active1NextSlide.bind(this);
+  }
+
+  // Slides config
+
+  slidePosition(slide) {
+    const margin = (this.wrapper.offsetWidth - slide.offsetWidth) / 2;
+    return -(slide.offsetLeft - margin);
+  }
+
+  slidesConfig() {
+    this.slideArray = [...this.slide.children].map((element) => {
+      const position = this.slidePosition(element);
+      return { position, element };
+    });
+  }
+
+  slidesIndexNav(index) {
+    const last = this.slideArray.length - 1;
+    this.index = {
+      prev: index ? index - 1 : undefined,
+      active1: index,
+      next: index === last ? undefined : index + 1,
+    };
+  }
+
+  changeSlide(index) {
+    const active1Slide = this.slideArray[index];
+    this.moveSlide(active1Slide.position);
+    this.slidesIndexNav(index);
+    this.dist.finalPosition = active1Slide.position;
+    this.changeactive1Class();
+    this.wrapper.dispatchEvent(this.changeEvent);
+  }
+  changeactive1Class() {
+    this.slideArray.forEach((item) =>
+      item.element.classList.remove(this.active1Class)
+    );
+    this.slideArray[this.index.active1].element.classList.add(this.active1Class);
+  }
+
+  active1PrevSlide() {
+    if (this.index.prev !== undefined) this.changeSlide(this.index.prev);
+  }
+
+  active1NextSlide() {
+    if (this.index.next !== undefined) this.changeSlide(this.index.next);
+  }
+  onResize() {
+    setTimeout(() => {
+      this.slidesConfig();
+      this.changeSlide(this.index.active1);
+    }, 1000);
+  }
+  addResizeEvent() {
+    window.addEventListener("resize", this.onResize);
+  }
+
+  init() {
+    this.bindEvents();
+    this.transition(true);
+    this.addSlideEvents();
+    this.slidesConfig();
+    this.addResizeEvent();
+    this.changeSlide(0);
+    return this;
+  }
+}
+
+export default class SlideNav extends Slide {
+  constructor(slide, wrapper) {
+    super(slide, wrapper);
+    this.bindControlEvents();
+  }
+  addArrow(prev, next) {
+    this.prevElement = document.querySelector(prev);
+    this.nextElement = document.querySelector(next);
+    this.addArroweEvent();
+  }
+  addArroweEvent() {
+    this.prevElement.addEventListener("click", this.active1PrevSlide);
+    this.nextElement.addEventListener("click", this.active1NextSlide);
+  }
+  eventControl(item, index) {
+    item.addEventListener("click", (event) => {
+      event.preventDefault();
+      this.changeSlide(index);
+      this.active1ControlItem();
+    });
+    this.wrapper.addEventListener('changeEvent',this.active1ControlItem);
+  }
+  addControl(customControl) {
+    this.control = document.querySelector(customControl) || this.createControl();
+    this.controlArray = [...this.control.children];
+
+    this.active1ControlItem();
+    this.controlArray.forEach(this.eventControl);
+  }
+    active1ControlItem() {
+    this.controlArray.forEach(item => item.classList.remove(this.active1Class));
+    this.controlArray[this.index.active1].classList.add(this.active1Class);
+  }
+  bindControlEvents(){
+    this.eventControl = this.eventControl.bind(this);
+    this.active1ControlItem = this.active1ControlItem.bind(this);
+  }
+}

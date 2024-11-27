@@ -1,11 +1,8 @@
-body {
+body{
+   
     background: black;
-    margin-top: -0202px;
     font-family: Arial, sans-serif;
-    
 }
-
-
 .container {
     display: flex;
     flex-direction: column;
@@ -16,6 +13,7 @@ body {
 }
 
 .poster {
+    margin-top: -300px;
     width: 100%;
     height: auto;
     margin-bottom: 20px;
@@ -29,6 +27,7 @@ body {
 }
 
 .search-bar {
+    padding: 50px;
     display: flex;
     justify-content: center;
     width: 80%;
@@ -66,10 +65,10 @@ body {
     align-items: center;
     justify-content: center;
     border: none;
-    padding: 12px;
-    gap: 12px;
+    padding: 15px;  
     border-radius: 8px;
     cursor: pointer;
+    margin: 20px;
 }
 
 .button::before {
@@ -108,4 +107,66 @@ body {
 
 .button:active::before {
     scale: 0.7;
+}
+.slide{
+    display: flex;
+}
+.slide:hover{
+    will-change: transform;
+}
+
+.slide li {
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .4);
+    flex-shrink: 0;
+    width: 88vw;
+    max-width: 800px;
+    margin: 0 20px;
+    opacity: .8;
+    transform: scale(.8);
+    transition: .4s;
+}
+.slide-wrapper{
+    overflow: hidden;
+}
+.slide li.active1{
+    opacity: 1;
+    transform: scale(1);
+}
+[data-control="slide"] {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+[data-control="slide"] li a {
+ display: block;
+ width: 12px;
+ height: 12px;
+ background: #fb5;
+ border-radius: 50%;
+ overflow: hidden;
+  text-indent: -999px;
+  margin: 5px;
+}
+[data-control="slide"] li.active1 a, [data-control="slide"] li a:hover {
+  background:#e54;
+   
+}
+.arrow-nav{
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+.arrow-nav button {
+    cursor:pointer;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    width: 40px;
+    height: 40px;
+    background: #fb5 url('../img/arrow.svg') center center no-repeat;
+}
+.arrow-nav button.prev{
+    transform: rotate(-180deg);
 }
