@@ -1,5 +1,4 @@
 body{
-   
     background: black;
     font-family: Arial, sans-serif;
 }
@@ -110,6 +109,7 @@ body{
 }
 .slide{
     display: flex;
+    padding: 10px 10px;
 }
 .slide:hover{
     will-change: transform;
@@ -165,8 +165,147 @@ body{
     color: white;
     width: 40px;
     height: 40px;
-    background: #fb5 url('../img/arrow.svg') center center no-repeat;
+    background: green url('../img/arrow.svg') center center no-repeat;
 }
 .arrow-nav button.prev{
     transform: rotate(-180deg);
+}
+
+ul{
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+}
+img{
+    display: block;
+    max-width: 100%;
+}
+@media (max-width: 900px) {
+    .container {
+        height: 85vh;
+    padding: 20px;
+    }
+    .poster {
+        margin-top: -200px; 
+    }
+
+    .search-bar {
+        padding: 15px;
+        width: 100%;
+    }
+
+    .search-bar input {
+        font-size: 14px;
+        padding: 8px;
+    }
+    .menu {
+        flex-direction: column;
+        gap: 11px;
+    }
+    
+    .button {
+        position: relative;
+        width: 120px;
+        height: 40px;
+        background-color: #000;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        padding: 15px;  
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 20px;
+    }
+    
+    .button::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        left: -4px;
+        top: -1px;
+        margin: auto;
+        width: 128px;
+        height: 48px;
+        border-radius: 10px;
+        background: linear-gradient(-45deg, red 0%, green 100%);
+        z-index: -10;
+        pointer-events: none;
+        transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .button::after {
+        content: "";
+        z-index: -1;
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(-45deg, #fc00ff 0%, #00dbde 100%);
+        transform: translate3d(0, 0, 0) scale(0.95);
+        filter: blur(20px);
+    }
+    
+    .button:hover::after {
+        filter: blur(30px);
+    }
+    
+    .button:hover::before {
+        transform: rotate(-180deg);
+    }
+    
+    .button:active::before {
+        scale: 0.7;
+    }
+    .slide li {
+        width: 90vw;
+        margin: 10px;
+    }
+
+    .arrow-nav {
+        display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    }
+
+    .arrow-nav button {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+@media (max-width: 480px) {
+    body{
+        background: black;
+        font-family: Arial, sans-serif;
+        margin: 0; 
+        padding: 20px; 
+    }
+   
+    .poster {
+        margin-top: -300px;
+        width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .search-bar input {
+        font-size: 12px;
+    }
+
+    .button {
+        font-size: 12px;
+    }
+    .slide{
+        padding: 10px 10px;
+        opacity: 1;
+     transform: scale(1);
+    }
+    .slide li {
+        width: 100vw; 
+        margin: 5px;
+    }
+
+    .arrow-nav {
+        margin-top: 10px;
+    }
 }
